@@ -33,13 +33,6 @@ interface Sysfs {
     fun read(path: String): String? = read(listOf(path))[path]
 
     /**
-     * Writes one value. Only the UCSI debugfs interface needs this, and only
-     * to ask a question - see [org.witaqua.mtk.pd_info.source.UcsiDebugfs].
-     * Defaults to refusing, so a reader is read-only unless it says otherwise.
-     */
-    fun write(path: String, value: String): Boolean = false
-
-    /**
      * The name of what a symlink points at, or null where there is no link.
      *
      * The power delivery class needs it: a partner's objects live in a device
@@ -68,15 +61,6 @@ object DirectSysfs : Sysfs {
                 null
             }
         }.toMap()
-
-    override fun write(path: String, value: String): Boolean =
-        try {
-            File(path).writeText(value)
-            true
-        } catch (e: IOException) {
-            Log.d(TAG, "could not write $path", e)
-            false
-        }
 
     override fun resolve(path: String): String? =
         try {
@@ -147,13 +131,6 @@ object RootSysfs : Sysfs {
             ?.toMap()
             ?: emptyMap()
     }
-
-    override fun write(path: String, value: String): Boolean =
-        /*
-         * The shell's own status is the answer here: a refused write is the
-         * question not being asked rather than a missing file.
-         */
-        shell("printf '%s' '${value.shellSafe()}' > '${path.shellSafe()}'") != null
 
     override fun resolve(path: String): String? {
         val quoted = "'${path.shellSafe()}'"
