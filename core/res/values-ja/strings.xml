@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The WitAqua Project
+
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">USB Power Delivery</string>
+    <string name="pd_title">USB Power Delivery</string>
+    <string name="pd_summary">充電器が提示した電力と、実際に引いている電力</string>
+
+    <string name="headline_nothing">未接続</string>
+    <string name="headline_at">%1$sV / %2$sA</string>
+    <string name="section_state">状態</string>
+    <string name="label_port">ポート</string>
+    <string name="label_state">ケーブル</string>
+    <string name="state_detached">未接続</string>
+    <string name="note_detached">ケーブルが繋がっていないため、まだ報告できるものがありません。充電器を挿すと、提示された電力・どれを選んだか・届いている値が自動で埋まります。</string>
+    <string name="section_port">ポート <xliff:g id="name" example="port0">%1$s</xliff:g></string>
+    <string name="section_port_unnamed">ポート</string>
+    <string name="section_advertised">充電器が提示した電力</string>
+    <string name="section_in_use">使用中</string>
+    <string name="section_requested">このポートが要求する電力</string>
+    <string name="section_requested_port"><xliff:g id="name" example="port0">%1$s</xliff:g> が要求する電力</string>
+    <string name="section_adapter">充電器</string>
+    <string name="section_measured"><xliff:g id="supply" example="usb">%1$s</xliff:g> での実測</string>
+    <string name="section_why_empty">一覧が出ない理由</string>
+    <string name="section_unavailable">取得できません</string>
+
+    <string name="label_contract">契約</string>
+    <string name="label_power_role">電源ロール</string>
+    <string name="label_data_role">データロール</string>
+    <string name="label_protocol">プロトコル</string>
+    <string name="label_pd_revision">PD リビジョン</string>
+    <string name="label_partner">充電器</string>
+    <string name="label_role_definition">ポートの設定</string>
+    <string name="label_object">オブジェクト <xliff:g id="index" example="1">%1$d</xliff:g></string>
+    <string name="label_request">選択中</string>
+    <string name="label_reported_as">報告された種別</string>
+    <string name="label_handshake">ハンドシェイク</string>
+    <string name="label_quick_charge">充電レート</string>
+    <string name="label_apdo_max">最大 APDO</string>
+    <string name="label_power_max">電力上限</string>
+    <string name="label_authenticated">認証</string>
+    <string name="label_voltage">電圧</string>
+    <string name="label_current">電流</string>
+    <string name="label_platform">プラットフォーム</string>
+    <string name="label_kernel">カーネル</string>
+
+    <string name="contract_explicit">確立済み</string>
+    <string name="contract_implicit">未確立</string>
+    <string name="contract_typec_default">Type-C 標準電流</string>
+    <string name="contract_typec_current">Type-C、<xliff:g id="current" example="3.0A">%1$s</xliff:g> を提示</string>
+    <string name="role_source">給電 (Source)</string>
+    <string name="role_sink">受電 (Sink)</string>
+    <string name="role_host">ホスト (DFP)</string>
+    <string name="role_device">デバイス (UFP)</string>
+    <string name="role_none">未接続</string>
+    <string name="partner_supports_pd">Power Delivery 対応</string>
+    <string name="partner_no_pd">Power Delivery 非対応</string>
+
+    <string name="capability_fixed">固定 <xliff:g id="volts">%1$s</xliff:g>V <xliff:g id="amps">%2$s</xliff:g>A</string>
+    <string name="capability_battery">バッテリー <xliff:g id="min">%1$s</xliff:g>〜<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="watts">%3$s</xliff:g>W</string>
+    <string name="capability_variable">可変 <xliff:g id="min">%1$s</xliff:g>〜<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="amps">%3$s</xliff:g>A</string>
+    <string name="capability_programmable">PPS <xliff:g id="min">%1$s</xliff:g>〜<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="amps">%3$s</xliff:g>A</string>
+    <string name="capability_unrecognised">提示あり。このカーネルにデコーダがありません (type <xliff:g id="type" example="255">%1$d</xliff:g>)</string>
+
+    <string name="request_object">オブジェクト <xliff:g id="index">%1$d</xliff:g></string>
+    <string name="request_object_offering">オブジェクト <xliff:g id="index">%1$d</xliff:g>、<xliff:g id="offer" example="PPS 3.3〜20V 3.25A">%2$s</xliff:g></string>
+
+    <string name="connection_none">Power Delivery なし</string>
+    <string name="connection_hard_reset">復帰中 (ハードリセット)</string>
+    <string name="connection_soft_reset">復帰中 (ソフトリセット)</string>
+    <string name="connection_ready">PD 2.0、固定電源</string>
+    <string name="connection_ready_pd30">PD 3.0、固定電源</string>
+    <string name="connection_ready_apdo">PD 3.0、プログラマブル電源 (PPS)</string>
+    <string name="connection_typec_only">Type-C のみ、Power Delivery なし</string>
+    <string name="connection_new_source">新しい capabilities を受信</string>
+
+    <string name="quick_charge_normal">通常</string>
+    <string name="quick_charge_fast">Fast</string>
+    <string name="quick_charge_flash">Flash</string>
+    <string name="quick_charge_turbo">Turbo</string>
+    <string name="quick_charge_super">HyperCharge</string>
+    <string name="authenticated_yes">成功</string>
+    <string name="authenticated_no">未認証</string>
+
+    <string name="value_volts"><xliff:g id="volts">%1$s</xliff:g>V</string>
+    <string name="value_amps"><xliff:g id="amps">%1$s</xliff:g>A</string>
+    <string name="value_watts"><xliff:g id="watts">%1$s</xliff:g>W</string>
+    <string name="list_separator">"、"</string>
+
+    <string name="note_no_source_flags">充電器が自分自身を説明するビット（電源から給電・給電受電の両対応・USB 通信対応など）はここには出ません。MediaTek のポートコントローラがユーザー空間に渡す前に各オブジェクトを 4 つの数値へデコードしてしまい、フラグはその中に含まれないためです。</string>
+    <string name="note_request_position">直近の要求が指したオブジェクトで、このインタフェースが公開しているのはここまでです。そのオブジェクトに対して要求した電圧・電流は、このプラットフォームの sysfs のどこにもありません。実際に届いている値は下の実測を見てください。</string>
+    <string name="note_request_programmable">契約相手はプログラマブル電源なので、電圧はメニュー上の値ではなく、そのオブジェクトの範囲内で最後に要求した値になります（充電スタックがそう報告しています。要求そのものは公開されていません）。実際に届いている値は下の実測を見てください。</string>
+    <string name="note_adapter">ワイヤ上のやり取りではなく、充電スタック側がネゴシエーションをどう解釈したかです。ハンドシェイクはポリシーエンジン由来ですが、残りはベンダー独自で、電気的な意味よりも充電アニメーションの制御に使われています。</string>
+    <string name="note_measured_not_agreed">合意値ではなく、実際に供給されている値です。このプラットフォームは合意した電圧・電流を公開しておらず、どのオブジェクトに対する合意かだけが分かります。</string>
+    <string name="note_no_contract">何かが接続されていますが、ポートコントローラは相手側の capabilities を持っていません。ネゴシエーションが成立していないケーブルはこう見えます（Source Capabilities メッセージが一度も届いていない）。Power Delivery 対応の充電器なら、挿して 1 秒ほどでここが埋まります。</string>
+    <string name="note_no_object_interface">MediaTek のポートコントローラを読めなかったため、オブジェクト一覧は取得できません。場所は /sys/class/tcpc で、ROM に組み込む場合はこのアプリから読めるラベル付けが必要です（README 参照）。下の充電器の欄には、充電スタック側が把握している内容が出ます。</string>
+    <string name="note_unavailable">Power Delivery のインタフェースが見つかりませんでした。オブジェクト一覧は MediaTek 独自の /sys/class/tcpc にありますが、この基板では存在しないか、このアプリから読めません。</string>
+    <string name="note_unavailable_not_mediatek">Power Delivery のインタフェースが見つからず、MediaTek の基板にも見えません。このアプリが読むのは MediaTek のポートコントローラクラス (/sys/class/tcpc) です。Qualcomm 機では QcomPdInfo を使ってください。</string>
+
+    <string name="root_needed">この ROM では読み取りに root 権限が必要ですが、許可されませんでした。</string>
+    <string name="refresh">更新</string>
+</resources>

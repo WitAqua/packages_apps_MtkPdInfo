@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The WitAqua Project
+
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">USB Power Delivery</string>
+    <string name="pd_title">USB Power Delivery</string>
+    <string name="pd_summary">What the charger offers and what is being drawn</string>
+
+    <string name="headline_nothing">Nothing attached</string>
+    <string name="headline_at">%1$sV at %2$sA</string>
+    <string name="section_state">State</string>
+    <string name="label_port">Port</string>
+    <string name="label_state">Cable</string>
+    <string name="state_detached">Nothing attached</string>
+    <string name="note_detached">No cable, so there is nothing to report yet. Plug a charger in and this fills itself in - what it offered, which line of it was taken, and what is arriving.</string>
+    <string name="section_port">Port <xliff:g id="name" example="port0">%1$s</xliff:g></string>
+    <string name="section_port_unnamed">Port</string>
+    <string name="section_advertised">Offered by the charger</string>
+    <string name="section_in_use">In use</string>
+    <string name="section_requested">What this port asks for</string>
+    <string name="section_requested_port">What <xliff:g id="name" example="port0">%1$s</xliff:g> asks for</string>
+    <string name="section_adapter">Charger</string>
+    <string name="section_measured">Measured at <xliff:g id="supply" example="usb">%1$s</xliff:g></string>
+    <string name="section_why_empty">Why the list is missing</string>
+    <string name="section_unavailable">Not available</string>
+
+    <string name="label_contract">Contract</string>
+    <string name="label_power_role">Power role</string>
+    <string name="label_data_role">Data role</string>
+    <string name="label_protocol">Protocol</string>
+    <string name="label_pd_revision">PD revision</string>
+    <string name="label_partner">Charger</string>
+    <string name="label_role_definition">Port is set to</string>
+    <string name="label_object">Object <xliff:g id="index" example="1">%1$d</xliff:g></string>
+    <string name="label_request">Taken</string>
+    <string name="label_reported_as">Reported as</string>
+    <string name="label_handshake">Handshake</string>
+    <string name="label_quick_charge">Charge rate</string>
+    <string name="label_apdo_max">Best programmable supply</string>
+    <string name="label_power_max">Budget</string>
+    <string name="label_authenticated">Authentication</string>
+    <string name="label_voltage">Voltage</string>
+    <string name="label_current">Current</string>
+    <string name="label_platform">Platform</string>
+    <string name="label_kernel">Kernel</string>
+
+    <string name="contract_explicit">Negotiated</string>
+    <string name="contract_implicit">Not negotiated</string>
+    <string name="contract_typec_default">Type-C default current</string>
+    <string name="contract_typec_current">Type-C, <xliff:g id="current" example="3.0A">%1$s</xliff:g> advertised</string>
+    <string name="role_source">Supplying (source)</string>
+    <string name="role_sink">Drawing (sink)</string>
+    <string name="role_host">Host (DFP)</string>
+    <string name="role_device">Device (UFP)</string>
+    <string name="role_none">Nothing attached</string>
+    <string name="partner_supports_pd">Speaks power delivery</string>
+    <string name="partner_no_pd">Does not speak power delivery</string>
+
+    <string name="capability_fixed">Fixed <xliff:g id="volts">%1$s</xliff:g>V <xliff:g id="amps">%2$s</xliff:g>A</string>
+    <string name="capability_battery">Battery <xliff:g id="min">%1$s</xliff:g>-<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="watts">%3$s</xliff:g>W</string>
+    <string name="capability_variable">Variable <xliff:g id="min">%1$s</xliff:g>-<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="amps">%3$s</xliff:g>A</string>
+    <string name="capability_programmable">PPS <xliff:g id="min">%1$s</xliff:g>-<xliff:g id="max">%2$s</xliff:g>V <xliff:g id="amps">%3$s</xliff:g>A</string>
+    <string name="capability_unrecognised">Offered, and this kernel has no decoder for it (type <xliff:g id="type" example="255">%1$d</xliff:g>)</string>
+
+    <string name="request_object">Object <xliff:g id="index">%1$d</xliff:g></string>
+    <string name="request_object_offering">Object <xliff:g id="index">%1$d</xliff:g>, <xliff:g id="offer" example="PPS 3.3-20V 3.25A">%2$s</xliff:g></string>
+
+    <string name="connection_none">No power delivery</string>
+    <string name="connection_hard_reset">Recovering (hard reset)</string>
+    <string name="connection_soft_reset">Recovering (soft reset)</string>
+    <string name="connection_ready">PD 2.0, fixed supply</string>
+    <string name="connection_ready_pd30">PD 3.0, fixed supply</string>
+    <string name="connection_ready_apdo">PD 3.0, programmable supply (PPS)</string>
+    <string name="connection_typec_only">Type-C only, no power delivery</string>
+    <string name="connection_new_source">New capabilities offered</string>
+
+    <string name="quick_charge_normal">Normal</string>
+    <string name="quick_charge_fast">Fast</string>
+    <string name="quick_charge_flash">Flash</string>
+    <string name="quick_charge_turbo">Turbo</string>
+    <string name="quick_charge_super">HyperCharge</string>
+    <string name="authenticated_yes">Passed</string>
+    <string name="authenticated_no">Not authenticated</string>
+
+    <string name="value_volts"><xliff:g id="volts">%1$s</xliff:g>V</string>
+    <string name="value_amps"><xliff:g id="amps">%1$s</xliff:g>A</string>
+    <string name="value_watts"><xliff:g id="watts">%1$s</xliff:g>W</string>
+    <string name="list_separator">", "</string>
+
+    <string name="note_no_source_flags">The bits a charger uses to describe itself - mains powered, dual-role, USB capable - are not here: MediaTek\'s port controller decodes each object into four figures on the way to userspace and the flags are not among them.</string>
+    <string name="note_request_position">This is the object the last request named, which is all this interface publishes of it - the voltage and current asked against it are not in sysfs anywhere on this platform. What is measured below is what is actually arriving.</string>
+    <string name="note_request_programmable">The contract is against a programmable supply, so the voltage is whatever was last asked for within that object\'s range rather than a figure on the menu - the charging stack says so, and the request itself is not published. What is measured below is what is actually arriving.</string>
+    <string name="note_adapter">The charging stack\'s own reading of the negotiation rather than anything on the wire. The handshake comes from the policy engine; the rest is the vendor\'s, and drives the charging animation as much as anything electrical.</string>
+    <string name="note_measured_not_agreed">This is what is being delivered rather than what was agreed: nothing on this platform publishes the negotiated figures, only which object they were agreed against.</string>
+    <string name="note_no_contract">Something is attached and the port controller has no capabilities from it, which is what a cable that never negotiated looks like: no source capabilities message ever arrived, so there is no list to show. A charger that speaks power delivery fills this in within a second of being plugged in.</string>
+    <string name="note_no_object_interface">MediaTek\'s port controller could not be read, so the object list is out of reach. It is at /sys/class/tcpc, and on a ROM build it needs a label the app is allowed to read - see the app\'s README. The charger below still says what it settled on.</string>
+    <string name="note_unavailable">No power delivery interface was found. The object list is MediaTek\'s own, at /sys/class/tcpc, and on this board it is either absent or not readable by this app.</string>
+    <string name="note_unavailable_not_mediatek">No power delivery interface was found, and this does not look like a MediaTek board. This app reads MediaTek\'s port controller class at /sys/class/tcpc; a qualcomm handset wants QcomPdInfo instead.</string>
+
+    <string name="root_needed">Root access is needed to read these files on this ROM, and it was not granted.</string>
+    <string name="refresh">Refresh</string>
+</resources>

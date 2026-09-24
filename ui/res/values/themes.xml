@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The WitAqua Project
+
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- No action bar: the coloured band at the top of the layout is the
+         header, and two of them would say the same thing twice. DayNight so
+         the screen follows the rest of the system rather than deciding for
+         itself. -->
+    <style name="Theme.PdInfo" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
