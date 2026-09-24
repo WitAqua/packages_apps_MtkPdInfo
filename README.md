@@ -223,7 +223,7 @@ It comes out unsigned unless `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS` and
 `KEY_PASSWORD` are in the environment.
 
 For the sideloaded build, packaged as a module for KernelSU or Magisk:
-[Mtk-PD-Info-Module](https://github.com/soralis0912-dev/Mtk-PD-Info-Module).
+[Mtk-PD-Info-Module](https://github.com/WitAqua-tools/Mtk-PD-Info-Module).
 
 `gradle/AndroidManifest.xml` is the sideloaded variant's manifest without the
 package attribute, which AGP 8 refuses because it takes the application id from
