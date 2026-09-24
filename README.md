@@ -38,8 +38,9 @@ This is the MediaTek sibling of
 derived from: the screen, the reading strategy and the wording are that app's,
 and everything below the model is new, because the two platforms publish power
 delivery in entirely different places. Written for the Xiaomi 17T Pro
-(`warhol`, MT6993) and the 15T Pro (`klimt`, MT6991), and the interface it
-reads is MediaTek's own rather than either phone's, so any board with
+(`warhol`, MT6993) and the 15T Pro (`klimt`, MT6991), and run on the 14T
+(`degas`, MT6897), whose port controller is the same mt6375. The interface it
+reads is MediaTek's own rather than any one phone's, so any board with
 `drivers/misc/mediatek/typec/tcpc` should work.
 
 Two builds come out of this tree, differing only in how a file in `/sys` may be
@@ -131,6 +132,7 @@ type sysfs_tcpc, sysfs_type, fs_type;
 ```
 # sepolicy/vendor/genfs_contexts
 genfscon sysfs /devices/platform/<...>/tcpc   u:object_r:sysfs_tcpc:s0
+genfscon sysfs /class/tcpc                    u:object_r:sysfs_tcpc:s0
 ```
 
 ```
@@ -139,8 +141,40 @@ allow system_app sysfs_tcpc:dir r_dir_perms;
 allow system_app sysfs_tcpc:file r_file_perms;
 ```
 
-The type-C class wants the same treatment, for the roles and the revision. It
-is usually already labelled by the vendor policy; what is missing is the grant.
+**Label the class directory too, not only what its entries point at.** The app
+finds the port by listing `/sys/class/tcpc`, and listing a directory needs
+`read` where walking through it needs only `search` - which
+`system/sepolicy/private/domain.te` already grants every domain on generic
+`sysfs`. So the miss produces no denial at all: `File.list()` returns null, the
+source looks absent, and the screen says the interface was not found. Labelling
+the device subtree alone gets exactly that.
+
+The type-C class wants the same treatment, for the roles and the revision, but
+not by the same means: MediaTek's base policy already carries
+`genfscon sysfs /class/typec u:object_r:sysfs_usb_nonplat:s0`, and **a second
+genfscon for one path does not build**. Ask for the type the vendor already
+used rather than relabelling:
+
+```
+# sepolicy/vendor/system_app.te
+allow system_app sysfs_usb_nonplat:dir r_dir_perms;
+allow system_app sysfs_usb_nonplat:file r_file_perms;
+```
+
+**Relabelling takes the subtree away from whoever had it.** The type-C port's
+platform device is generic `sysfs` on a stock policy, which every domain can
+walk; give it a type of its own and the ones that were reading it stop. On a
+MediaTek board that is the USB HAL, which writes `power_role`, `data_role` and
+`port_type` there to swap roles, so give it back both:
+
+```
+# sepolicy/vendor/mtk_hal_usb.te
+allow mtk_hal_usb sysfs_tcpc:dir r_dir_perms;
+allow mtk_hal_usb sysfs_tcpc:file rw_file_perms;
+```
+
+`logcat | grep avc` after the first boot names anything else that was relying
+on the old label.
 
 **The charger's own readings cannot be granted.**
 `system/sepolicy/private/domain.te` has a neverallow on `sysfs_batteryinfo` for
