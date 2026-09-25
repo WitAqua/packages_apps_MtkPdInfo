@@ -58,21 +58,8 @@ opened:
 The way in is not chosen at build time: it follows what can actually be read.
 See `core/src/.../source/Sources.kt`.
 
-## What it reads
-
-| Node | Carries |
-| --- | --- |
-| `/sys/class/tcpc/<port>/caps_info` | both ends' objects, and the position in force |
-| `/sys/class/tcpc/<port>/pe_ready` | whether a contract exists |
-| `/sys/class/typec/port0` | the roles, the revision, whether a partner is there |
-| `/sys/class/power_supply/usb/*` | what the charging stack made of the adapter |
-| `/sys/class/power_supply/usb/voltage_now` | what is actually arriving |
-
-`/sys/class/usb_power_delivery` is not among them. It is present on these
-boards and always empty - `rt_pd_manager.c` registers the port with the type-C
-class and never registers a power delivery device - so MediaTek's own class is
-where the objects are. [docs/kernel.md](docs/kernel.md) has the detail, and the
-three things that interface loses on the way out of the kernel.
+For the sideloaded build, packaged as a module for KernelSU or Magisk:
+[Mtk-PD-Info-Module](https://github.com/WitAqua-tools/Mtk-PD-Info-Module).
 
 ## Building it into a ROM
 
@@ -208,6 +195,23 @@ adb shell su -c 'ls -Z /sys/class/power_supply/usb/real_type'
 
 `logcat | grep avc` while the screen is open will name anything still refused.
 
+### 4. What you get
+
+With the nodes readable, `MtkPdInfo` needs no root. The port controller is the
+whole of the object list on a MediaTek board, so a ROM build shows the same as
+the sideloaded one does: both ends' objects, the contract, the position in
+force, and whether that position is a programmable supply.
+
+What it does not show is the charger section and the measurement, and no policy
+can give them back - `/sys/class/power_supply/usb/*` is `sysfs_batteryinfo`,
+neverallowed for `system_app`. Nothing on the screen depends on them: which
+object is in force already settles whether the contract is programmable, which
+is the question `pd_type` would have answered.
+
+A board taken all the way through, with the labels read off the handset and
+what the screen reads with and without a power delivery charger attached, is
+[docs/6.1_xiaomi-mt6897.md](docs/6.1_xiaomi-mt6897.md).
+
 ## Building the sideloaded variant
 
 Soong is the primary build - the ROM variant wants the platform signature and
@@ -222,9 +226,6 @@ gradle assembleRelease
 It comes out unsigned unless `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS` and
 `KEY_PASSWORD` are in the environment.
 
-For the sideloaded build, packaged as a module for KernelSU or Magisk:
-[Mtk-PD-Info-Module](https://github.com/WitAqua-tools/Mtk-PD-Info-Module).
-
 `gradle/AndroidManifest.xml` is the sideloaded variant's manifest without the
 package attribute, which AGP 8 refuses because it takes the application id from
 `build.gradle.kts`. Soong reads it from the manifest and has nowhere else to
@@ -236,6 +237,9 @@ look, so the two cannot share a file - keep them in step.
   the three things its interface loses on the way to userspace, why the
   upstream power delivery class is registered and empty, what the charging
   stack adds, and the two changes that would close the gap.
+- [docs/6.1_xiaomi-mt6897.md](docs/6.1_xiaomi-mt6897.md) - a board taken all the
+  way through: the labels it needed, the three the rules above were written
+  from, and what the screen reads with and without a charger.
 
 ## Licence
 
