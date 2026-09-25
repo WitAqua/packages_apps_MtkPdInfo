@@ -11,32 +11,41 @@ import org.witaqua.mtk.pd_info.model.PdConnection
 import org.witaqua.mtk.pd_info.model.QuickCharge
 
 /*
- * The charging stack, through the attributes drivers/power/supply/mtk_charger.c
- * hangs off the USB power supply:
+ * The charging stack, which is the only thing on a MediaTek board that says
+ * how far the power delivery handshake got. It publishes that in one of two
+ * places, and which one a board has follows whose charger driver it took.
  *
- *   /sys/class/power_supply/usb/real_type           "USB_PD", "SDP", "DCP"
- *   /sys/class/power_supply/usb/pd_type             enum mtk_pd_connect_type
- *   /sys/class/power_supply/usb/quick_charge_type   enum quick_charge_type
- *   /sys/class/power_supply/usb/apdo_max            watts
- *   /sys/class/power_supply/usb/power_max           watts
- *   /sys/class/power_supply/usb/pd_authentication   Xiaomi's adapter check
+ * Xiaomi's fork hangs a group of its own off the USB power supply, from
+ * usb_sysfs_create_group() in drivers/power/supply/mtk_charger.c:
  *
- * They are one sysfs group registered by usb_sysfs_create_group(), so a board
- * has all of them or none. Xiaomi's tree is where this shape comes from;
- * MediaTek's own reference charger publishes the same pd_type through the
- * adapter class, which is the one attribute here that matters for reading a
- * contract rather than for the charging animation.
+ *   /sys/class/power_supply/usb/real_type          "USB_PD", "SDP", "DCP", ...
+ *   /sys/class/power_supply/usb/pd_type            enum mtk_pd_connect_type
+ *   /sys/class/power_supply/usb/quick_charge_type  enum quick_charge_type
+ *   /sys/class/power_supply/usb/apdo_max           watts
+ *   /sys/class/power_supply/usb/power_max          watts
+ *   /sys/class/power_supply/usb/pd_authentication  the vendor's adapter check
  *
- * pd_type is the MediaTek answer to a question the wire format does not settle:
- * whether the contract is against a programmable supply. The port controller
- * knows - PE_READY_SNK_APDO is a state of its policy engine - and this is
- * where that state surfaces. Worth one read even on a board whose object list
- * is readable, because it agrees or disagrees with what the objects say.
+ * MediaTek's own framework puts the same question's answer on the charger
+ * platform device instead, and has no USB supply at all:
+ *
+ *   /sys/devices/platform/charger/pd_type          the same enum
+ *   /sys/devices/platform/charger/chr_type         BC1.2 detection's answer
+ *   /sys/devices/platform/charger/charge_rate      where the vendor added one
+ *
+ * Both are read, because a board has one or the other and nothing says which
+ * from the outside. pd_type is what matters either way: it is the only thing
+ * that distinguishes a programmable contract from a fixed one without reading
+ * the objects, and where the objects are readable it agrees or disagrees with
+ * them.
  */
 internal object MtkCharger {
+    /* Xiaomi's fork, on the USB supply. */
     private const val SUPPLY = "$POWER_SUPPLY/usb"
 
-    private val ATTRIBUTES = listOf(
+    /* MediaTek's own, on the charger platform device. */
+    private const val CHARGER = "/sys/devices/platform/charger"
+
+    private val SUPPLY_ATTRIBUTES = listOf(
         "real_type",
         "pd_type",
         "quick_charge_type",
@@ -45,28 +54,46 @@ internal object MtkCharger {
         "pd_authentication",
     )
 
+    private val CHARGER_ATTRIBUTES = listOf(
+        "pd_type",
+        "chr_type",
+        "charge_rate",
+    )
+
     /** What the charging stack made of the adapter, or null where it is silent. */
     fun adapter(sysfs: Sysfs): Adapter? {
-        val values = sysfs.read(ATTRIBUTES.map { "$SUPPLY/$it" })
+        val values = sysfs.read(
+            SUPPLY_ATTRIBUTES.map { "$SUPPLY/$it" } + CHARGER_ATTRIBUTES.map { "$CHARGER/$it" }
+        )
         if (values.isEmpty()) {
             return null
         }
 
-        fun value(name: String) = values["$SUPPLY/$name"]
-        fun number(name: String) = value(name)?.toIntOrNull()
+        fun supply(name: String) = values["$SUPPLY/$name"]
+        fun charger(name: String) = values["$CHARGER/$name"]
+        fun number(value: String?) = value?.toIntOrNull()
 
         val adapter = Adapter(
-            realType = value("real_type")?.takeIf { it != UNKNOWN },
-            connection = PdConnection.of(number("pd_type")),
-            quickCharge = QuickCharge.of(number("quick_charge_type")),
+            /*
+             * The fork's own name for the adapter where there is one, else
+             * what BC1.2 detection called it. chr_type is the coarser of the
+             * two - it does not know a PD contract from a plain charger - but
+             * the handshake below says that part.
+             */
+            realType = (supply("real_type") ?: charger("chr_type"))
+                ?.takeIf { it != UNKNOWN },
+            connection = PdConnection.of(number(supply("pd_type") ?: charger("pd_type"))),
+            quickCharge = QuickCharge.of(number(supply("quick_charge_type"))),
+            rate = charger("charge_rate"),
             /* Zero is "nothing on offer" rather than a nought-watt supply. */
-            apdoMaxWatts = number("apdo_max")?.takeIf { it > 0 },
-            powerMaxWatts = number("power_max")?.takeIf { it > 0 },
-            authenticated = number("pd_authentication")?.let { it == 1 },
+            apdoMaxWatts = number(supply("apdo_max"))?.takeIf { it > 0 },
+            powerMaxWatts = number(supply("power_max"))?.takeIf { it > 0 },
+            authenticated = number(supply("pd_authentication"))?.let { it == 1 },
         )
 
         return adapter.takeIf {
-            it.realType != null || it.connection != null || it.powerMaxWatts != null
+            it.realType != null || it.connection != null ||
+                it.powerMaxWatts != null || it.rate != null
         }
     }
 

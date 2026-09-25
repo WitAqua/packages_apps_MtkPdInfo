@@ -102,6 +102,12 @@ objects come from MediaTek's own class or not at all:
 
 ## What the charging stack adds
 
+This is the one part that is not the same on every MediaTek board, because it
+is the vendor's own charger driver rather than MediaTek's port controller. It
+is published in one of two places.
+
+### Xiaomi's fork
+
 `drivers/power/supply/mtk_charger.c` hangs a group of its own off the USB power
 supply, through `usb_sysfs_create_group()`:
 
@@ -131,6 +137,31 @@ badge behind the charging animation, and `apdo_max` is what it keys off (50W or
 better is "super", 30W is "turbo"). A MediaTek board from anyone else has
 `pd_type` and generally not the rest, which is why the app shows each row only
 where it reads.
+
+### MediaTek's own framework
+
+A board that kept MediaTek's charger has no USB power supply at all, and puts
+the same answer on the charger platform device:
+
+```
+/sys/devices/platform/charger/pd_type       the same enum
+/sys/devices/platform/charger/chr_type      what BC1.2 detection called it
+/sys/devices/platform/charger/charge_rate   where the vendor added one
+```
+
+Checked on the FCNT fuji kernel, which is MT6897 like the 14T and carries
+`mtk_charger_framework.ko` instead of Xiaomi's fork: the module exports
+`pd_type_show` and `chr_type_show` as device attributes, and registers
+`battery`, `mtk-master-charger` and `mtk-slave-charger` as its supplies - no
+`usb` among them. Its charger chip registers one more, `primary_chg`, which is
+what sees the bus there.
+
+`chr_type` is the coarser of the two type answers - BC1.2 detection does not
+know a power delivery contract from a plain charger - so it is worth reading
+only beside `pd_type`, which does.
+
+The app reads both layouts and takes whichever answered. Nothing tells them
+apart from the outside, and a board has one or the other.
 
 ## Units
 
@@ -213,3 +244,7 @@ version.
   every path, label and reading quoted above.
 - Xiaomi 17T Pro (`warhol`, MT6993), kernel `6.12.38-android16-5` - the source
   this describes, `MiCode/MTK_kernel_device_modules` branch `bsp-warhol-w-oss`.
+- FCNT fuji (MT6897), kernel `6.1.157-android14-11`, from the prebuilt modules
+  and sepolicy in `WitAqua-Devices/device_fcnt_fuji{,-kernel}` - the port
+  controller's attribute names, the charger layout above, and the device path
+  the type-C port sits at, which is the same `mt6375@34:tcpc` as the 14T.

@@ -247,8 +247,12 @@ class Renderer(private val context: Context) {
             adapter.connection?.let {
                 add(Row(context.getString(R.string.label_handshake), connection(it)))
             }
-            adapter.quickCharge?.let {
-                add(Row(context.getString(R.string.label_quick_charge), quickCharge(it)))
+            /*
+             * One row from either stack: Xiaomi's enum where the board has
+             * one, else the words MediaTek's own framework prints.
+             */
+            (adapter.quickCharge?.let { quickCharge(it) } ?: adapter.rate)?.let {
+                add(Row(context.getString(R.string.label_quick_charge), it))
             }
             adapter.apdoMaxWatts?.let {
                 add(

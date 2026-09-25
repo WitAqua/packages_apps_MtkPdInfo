@@ -191,7 +191,12 @@ Check the labels on the handset rather than trusting any of this:
 ```sh
 adb shell su -c 'ls -Zd /sys/class/tcpc/* /sys/class/typec/*'
 adb shell su -c 'ls -Z /sys/class/power_supply/usb/real_type'
+adb shell su -c 'ls -Z /sys/devices/platform/charger/pd_type'
 ```
+
+The last two are the two places a charging stack publishes what it made of the
+adapter - Xiaomi's fork on the USB supply, MediaTek's own on the charger
+device. A board has one or the other, and the app reads whichever answered.
 
 `logcat | grep avc` while the screen is open will name anything still refused.
 
@@ -203,10 +208,10 @@ the sideloaded one does: both ends' objects, the contract, the position in
 force, and whether that position is a programmable supply.
 
 What it does not show is the charger section and the measurement, and no policy
-can give them back - `/sys/class/power_supply/usb/*` is `sysfs_batteryinfo`,
-neverallowed for `system_app`. Nothing on the screen depends on them: which
-object is in force already settles whether the contract is programmable, which
-is the question `pd_type` would have answered.
+can give them back - the charging stack's attributes are `sysfs_batteryinfo`
+wherever they sit, and that is neverallowed for `system_app`. Nothing on the
+screen depends on them: which object is in force already settles whether the
+contract is programmable, which is the question `pd_type` would have answered.
 
 A board taken all the way through, with the labels read off the handset and
 what the screen reads with and without a power delivery charger attached, is

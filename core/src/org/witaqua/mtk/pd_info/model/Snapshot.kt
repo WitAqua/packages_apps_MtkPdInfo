@@ -144,6 +144,14 @@ data class Adapter(
     /** Xiaomi's classification of the charge rate, where the board has one. */
     val quickCharge: QuickCharge? = null,
 
+    /**
+     * The same idea in words rather than in an enum. MediaTek's own charger
+     * framework has no quick_charge_type; boards built on it carry a
+     * charge_rate that is already a string - "Normal", "Turbo" - so it is kept
+     * as one rather than mapped onto Xiaomi's list, which is not the same set.
+     */
+    val rate: String? = null,
+
     /** The best programmable supply on offer, in watts. */
     val apdoMaxWatts: Int? = null,
 

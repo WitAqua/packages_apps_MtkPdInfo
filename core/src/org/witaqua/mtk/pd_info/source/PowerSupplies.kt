@@ -13,15 +13,21 @@ internal const val POWER_SUPPLY = "/sys/class/power_supply"
 
 /*
  * The charger's supply, which measures the port rather than saying what was
- * agreed. On a MediaTek board there are several to choose between - "usb",
- * "mtk-master-charger", the charge pumps - and they do not agree on units, so
- * this takes the first one that is online and says it is a USB supply, which
- * is "usb" on every board checked.
+ * agreed. A MediaTek board has several to choose between and they do not agree
+ * on units or even on names: Xiaomi's fork registers "usb", MediaTek's own
+ * framework does not and leaves the charger chip's own supply - "primary_chg"
+ * - as the one that sees the bus, beside "mtk-master-charger" and the charge
+ * pumps.
+ *
+ * So the pick is by what a supply answers rather than by what it is called:
+ * online, not the battery, and carrying a reading. "usb" first where it is
+ * there, then anything calling itself a USB supply, then whatever is left -
+ * which is how a board with MediaTek's own charger gets a measurement at all.
  */
 internal object ChargerSupply {
     fun measured(sysfs: Sysfs): Measured? =
         sysfs.list(POWER_SUPPLY)
-            .sortedBy { if (it == PREFERRED) 0 else 1 }
+            .sortedBy { rank(sysfs, it) }
             .firstNotNullOfOrNull { name ->
                 val directory = "$POWER_SUPPLY/$name"
                 val values = sysfs.read(
@@ -30,7 +36,12 @@ internal object ChargerSupply {
                 )
 
                 val type = values["$directory/type"] ?: return@firstNotNullOfOrNull null
-                if (!type.startsWith("USB") || values["$directory/online"] != "1") {
+                /*
+                 * The battery is the one supply that is always online and
+                 * always has a voltage, and it is never the answer: what it
+                 * measures is the cell rather than the bus.
+                 */
+                if (type == BATTERY || values["$directory/online"] != "1") {
                     return@firstNotNullOfOrNull null
                 }
 
@@ -43,7 +54,16 @@ internal object ChargerSupply {
                 Measured(name, type, millivolts, milliamps)
             }
 
+    /* "usb" first, then anything that says it is one, then the rest. */
+    private fun rank(sysfs: Sysfs, name: String): Int = when {
+        name == PREFERRED -> 0
+        sysfs.read("$POWER_SUPPLY/$name/type")?.startsWith(USB) == true -> 1
+        else -> 2
+    }
+
     private const val PREFERRED = "usb"
+    private const val USB = "USB"
+    private const val BATTERY = "Battery"
 
     /*
      * The power supply class documents these as micro units, and MediaTek's
